@@ -1,0 +1,24 @@
+
+spring:
+  datasource:
+    url: "jdbc:h2:mem:safeish-db"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+jwt:
+  secret: "Safe-Ish$2022"
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+    com:
+      seransaca:
+        intelygenz:
+          securitish: DEBUG
