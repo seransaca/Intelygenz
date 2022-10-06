@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.seransaca.intelygenz</groupId>
 	<artifactId>safe-ish</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.1.2-SNAPSHOT</version>
 	<name>Safe-ish</name>
 	<description>Intelygenz project for Spring Boot</description>
 	<properties>

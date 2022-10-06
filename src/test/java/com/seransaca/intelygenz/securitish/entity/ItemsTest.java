@@ -33,10 +33,7 @@ class ItemsTest {
     @Test
     @DisplayName("Valid Item")
     void testItem_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(ITEM);
-        items.setUuid(UUID);
+        Items items = Items.builder().id(1).item(ITEM).uuid(UUID).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 
@@ -49,10 +46,7 @@ class ItemsTest {
     @Test
     @DisplayName("Uuid is null")
     void testUUID_whenNull_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(ITEM);
-        items.setUuid(null);
+        Items items = Items.builder().id(1).item(ITEM).uuid(null).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 
@@ -64,10 +58,7 @@ class ItemsTest {
     @Test
     @DisplayName("Uuid too long")
     void testUUID_whenTooLong_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(ITEM);
-        items.setUuid(UUID_TOO_LONG);
+        Items items = Items.builder().id(1).item(ITEM).uuid(UUID_TOO_LONG).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 
@@ -79,10 +70,7 @@ class ItemsTest {
     @Test
     @DisplayName("Item name is null")
     void testItemName_whenNull_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(null);
-        items.setUuid(UUID);
+        Items items = Items.builder().id(1).item(null).uuid(UUID).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 
@@ -94,10 +82,7 @@ class ItemsTest {
     @Test
     @DisplayName("Item name too long")
     void testItemName_whenTooLong_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(ITEM_TOO_LONG);
-        items.setUuid(UUID);
+        Items items = Items.builder().id(1).item(ITEM_TOO_LONG).uuid(UUID).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 
@@ -109,10 +94,7 @@ class ItemsTest {
     @Test
     @DisplayName("Item name and uuid are null")
     void testItemNameAndUuid_whenNull_thenCorrect() {
-        Items items = new Items();
-        items.setId(1);
-        items.setItem(null);
-        items.setUuid(null);
+        Items items = Items.builder().id(1).item(null).uuid(null).build();
 
         Set<ConstraintViolation<Items>> validate = validator.validate(items);
 

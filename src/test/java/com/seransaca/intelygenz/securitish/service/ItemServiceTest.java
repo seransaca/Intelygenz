@@ -110,22 +110,13 @@ public class ItemServiceTest {
     }
 
     private Items getItemsDB(){
-        Items item = new Items();
-        item.setItem(ITEM1);
-        item.setUuid(UUID);
-        return item;
+        return Items.builder().uuid(UUID).item(ITEM1).build();
     }
 
     private List<Items> getListItemsDB(){
         List<Items> list = new ArrayList<>();
-        Items item1 = new Items();
-        item1.setItem(ITEM1);
-        item1.setUuid(UUID);
-        list.add(item1);
-        Items item2 = new Items();
-        item2.setItem(ITEM2);
-        item2.setUuid(UUID);
-        list.add(item2);
+        list.add(Items.builder().uuid(UUID).item(ITEM1).build());
+        list.add(Items.builder().uuid(UUID).item(ITEM2).build());
         return list;
     }
     private Optional<SafeBox> getSafeBox(){
