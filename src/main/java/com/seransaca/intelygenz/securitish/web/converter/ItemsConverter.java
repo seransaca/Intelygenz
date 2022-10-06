@@ -2,6 +2,7 @@ package com.seransaca.intelygenz.securitish.web.converter;
 
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
+import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
 import com.seransaca.intelygenz.securitish.service.exceptions.MalformedDataException;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
@@ -26,10 +27,16 @@ public interface ItemsConverter {
     @Mapping(target = "items", expression = "java(items.getItems())")
     PutItemsRequest toRequest(String safeboxId, ItemsRequestDTO items);
 
-    default ItemsDTO itemsToDto(List<Items> items) throws Exception {
+    default ItemsDTO itemsToDto(List<Items> items){
 
         ItemsDTO dto = new ItemsDTO(new ArrayList<>());
-        items.stream().forEach(item -> dto.getItemList().add(new ItemDTO(item.getId(),item.getItem())));
+        items.stream().forEach(item -> {
+            try {
+                dto.getItemList().add(new ItemDTO(item.getId(),Cypher.decrypt(item.getItem())));
+            } catch (Exception e) {
+                throw new CypherException(item.toString());
+            }
+        });
         return dto;
 
         /*for(Items item1: items){

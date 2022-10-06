@@ -24,7 +24,7 @@ public class ItemsControllerImpl implements ItemsController {
     private ItemsConverter itemsConverter;
 
     @Override
-    public ResponseEntity<ItemsDTO> getItems(String safeboxId) throws Exception {
+    public ResponseEntity<ItemsDTO> getItems(String safeboxId) {
 
         List<Items> items = itemsService.findItems(safeboxId);
         ItemsDTO dto = itemsConverter.itemsToDto(items);
@@ -33,7 +33,7 @@ public class ItemsControllerImpl implements ItemsController {
     }
 
     @Override
-    public ResponseEntity<ItemsDTO> putItems(String safeboxId, ItemsRequestDTO request) throws Exception {
+    public ResponseEntity<ItemsDTO> putItems(String safeboxId, ItemsRequestDTO request) {
 
         PutItemsRequest putItemsRequest = itemsConverter.toRequest(safeboxId, request);
         List<Items> items = itemsService.createItems(putItemsRequest);

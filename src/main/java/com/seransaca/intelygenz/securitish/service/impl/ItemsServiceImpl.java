@@ -6,6 +6,7 @@ import com.seransaca.intelygenz.securitish.repository.ItemsRepository;
 import com.seransaca.intelygenz.securitish.repository.SafeBoxRepository;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.ItemsService;
+import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
 import com.seransaca.intelygenz.securitish.service.exceptions.SafeboxNotFoundException;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import lombok.extern.log4j.Log4j2;
@@ -28,12 +29,18 @@ public class ItemsServiceImpl implements ItemsService {
 
 
     @Override
-    public List<Items> createItems(PutItemsRequest request) throws Exception {
+    public List<Items> createItems(PutItemsRequest request) {
 
         List<Items> list = new ArrayList<>();
-        Items items = null;
-
-        for(String item : request.getItems()){
+        request.getItems().stream().forEach(item -> {
+            try {
+                list.add(itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item)).build()));
+            } catch (Exception e) {
+                throw new CypherException(item);
+            }
+        });
+        return list;
+        /*for(String item : request.getItems()){
             items = new Items();
             items.setUuid(request.getUuid());
             items.setItem(Cypher.encrypt(item));
@@ -42,7 +49,7 @@ public class ItemsServiceImpl implements ItemsService {
             list.add(items);
         }
 
-        return list;
+        return list;*/
     }
 
     @Override

@@ -13,7 +13,7 @@ public interface ItemsService {
      *
      * @return A list of Items
      */
-    public List<Items> createItems(PutItemsRequest request) throws Exception;
+    public List<Items> createItems(PutItemsRequest request);
 
     /**
      * Return a list of items of safebox.

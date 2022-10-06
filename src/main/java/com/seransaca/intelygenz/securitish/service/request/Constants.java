@@ -12,5 +12,7 @@ public class Constants {
 
     public static String ERROR_SAFEBOX_LOCKED = "The safebox is locked";
 
+    public static String ERROR_ITEM_ENCRYPT = "There was an error encrypting items";
+
     public static String ERROR_AUTHORIZATION_NOT_FOUNT = "Unauthorized";
 }

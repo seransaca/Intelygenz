@@ -1,5 +1,6 @@
 package com.seransaca.intelygenz.securitish.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import static com.seransaca.intelygenz.securitish.entity.EntityValidationConstan
 @ToString
 @EqualsAndHashCode
 @Entity
+@Builder
 @Table(name = "items")
 public class Items {
 
