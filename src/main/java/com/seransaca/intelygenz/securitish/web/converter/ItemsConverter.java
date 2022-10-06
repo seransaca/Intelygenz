@@ -28,15 +28,16 @@ public interface ItemsConverter {
 
     default ItemsDTO itemsToDto(List<Items> items) throws Exception {
 
-        ItemsDTO list = new ItemsDTO();
-        list.setItemList(new ArrayList<>());
-        ItemDTO item = null;
-        for(Items item1: items){
+        ItemsDTO dto = new ItemsDTO(new ArrayList<>());
+        items.stream().forEach(item -> dto.getItemList().add(new ItemDTO(item.getId(),item.getItem())));
+        return dto;
+
+        /*for(Items item1: items){
             item = new ItemDTO();
             item.setItemId(item1.getId());
             item.setItemName(Cypher.decrypt(item1.getItem()));
-            list.getItemList().add(item);
+            dto.getItemList().add(item);
         }
-        return list;
+        return dto;*/
     }
 }
