@@ -34,7 +34,7 @@ public interface ItemsConverter {
             try {
                 dto.getItemList().add(new ItemDTO(item.getId(),Cypher.decrypt(item.getItem())));
             } catch (Exception e) {
-                throw new CypherException(item.toString());
+                throw new CypherException(item.toString(), CypherException.TYPE_ITEM_CYPHER_EXCEPTION);
             }
         });
         return dto;

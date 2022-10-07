@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
@@ -27,18 +28,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 public class ItemServiceTest {
-
-    private final static String ITEM1 = "item1Name";
-
-    private final static String ITEM2 = "item2Name";
-
-    private final static String UUID = "1aaf1523-e07c-4394-9ffb-ff8b0fdbf1ff";
-
-    private final static Integer SAFEBOX_ID = 1;
-
-    private final static String SAFEBOX_NAME = "safeboxName";
-
-    private final static String SAFEBOX_PASSWORD = "safeboxPassword";
 
     @Autowired
     private ItemsService itemsService;
@@ -51,12 +40,10 @@ public class ItemServiceTest {
 
     @TestConfiguration
     public static class ItemServiceTestConfig {
-
         @Bean
         public ItemsService itemsService() {
             return new ItemsServiceImpl();
         }
-
     }
 
     @BeforeEach
@@ -76,7 +63,6 @@ public class ItemServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(UUID, result.get(0).getUuid());
         assertEquals(ITEM1, result.get(0).getItem());
-
     }
 
     @Test
@@ -93,7 +79,6 @@ public class ItemServiceTest {
         assertEquals(ITEM1, result.get(0).getItem());
         assertEquals(UUID, result.get(1).getUuid());
         assertEquals(ITEM2, result.get(1).getItem());
-
     }
 
     private PutItemsRequest getPutItemsRequest(){

@@ -3,21 +3,19 @@ package com.seransaca.intelygenz.securitish.web.converter;
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
-import com.seransaca.intelygenz.securitish.service.exceptions.SafeboxNotFoundException;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
 import com.seransaca.intelygenz.securitish.web.dto.ItemsDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,12 +23,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 public class ItemConverterTest {
-
-    private static final Integer ITEM1_ID = 1;
-
-    private static final Integer ITEM2_ID = 2;
-
-    private static final String ITEM_NAME = "itemName";
 
     @Mock
     ItemsConverter itemsConverter;
@@ -55,7 +47,9 @@ public class ItemConverterTest {
     @Test
     void testItemsToDto_throwException(){
         when(itemsConverter.itemsToDto(getListItems()))
-                .thenThrow(new CypherException(Items.builder().id(ITEM1_ID).item(ITEM_NAME).build().toString()));
+                .thenThrow(new CypherException(Items.builder().id(ITEM1_ID).item(ITEM_NAME).build().toString(),
+                        CypherException.TYPE_ITEM_CYPHER_EXCEPTION));
+
         assertThrows(CypherException.class,() -> {
             itemsConverter.itemsToDto(getListItems());
         });

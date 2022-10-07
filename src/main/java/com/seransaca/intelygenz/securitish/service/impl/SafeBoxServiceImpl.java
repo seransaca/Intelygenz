@@ -4,6 +4,7 @@ import com.seransaca.intelygenz.securitish.entity.SafeBox;
 import com.seransaca.intelygenz.securitish.repository.SafeBoxRepository;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.SafeBoxService;
+import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
 import com.seransaca.intelygenz.securitish.service.exceptions.SafeboxNotFoundException;
 import com.seransaca.intelygenz.securitish.utils.UuidGenerator;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +23,7 @@ public class SafeBoxServiceImpl implements SafeBoxService {
 
     @Override
     @Transactional
-    public SafeBox createNewSafeBox(String name, String password) throws Exception {
+    public SafeBox createNewSafeBox(String name, String password){
         log.info("Creating SafeBox...");
         List<SafeBox> list = null;
         SafeBox safeBox = null;
@@ -33,7 +34,11 @@ public class SafeBoxServiceImpl implements SafeBoxService {
             safeBox = new SafeBox();
             safeBox.setUuid(UuidGenerator.createUuid());
             safeBox.setName(name);
-            safeBox.setPassword(Cypher.encrypt(password));
+            try {
+                safeBox.setPassword(Cypher.encrypt(password));
+            } catch (Exception e) {
+                throw new CypherException(password, CypherException.TYPE_PASSSWORD_CYPHER_EXCEPTION);
+            }
             safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
             safeBox = safeBoxRepository.save(safeBox);
         }else{
