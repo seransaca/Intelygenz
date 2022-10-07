@@ -21,7 +21,7 @@ public class SafeBoxControllerImpl implements SafeBoxController {
     private SafeBoxConverter safeBoxConverter;
 
     @Override
-    public ResponseEntity<SafeBoxDTO> createSafeBox(SafeBoxRequestDTO request) throws Exception {
+    public ResponseEntity<SafeBoxDTO> createSafeBox(SafeBoxRequestDTO request){
 
         String name = request.getName();
         String password = request.getPassword();

@@ -14,5 +14,11 @@ public class Constants {
 
     public static String ERROR_ITEM_ENCRYPT = "There was an error encrypting items";
 
+    public static String ERROR_ITEM_DECRYPT = "There was an error decrypting items";
+
+    public static String ERROR_PASSWORD_ENCRYPT = "There was an error encrypting password";
+
+    public static String ERROR_PASSWORD_DECRYPT = "There was an error decrypting password";
+
     public static String ERROR_AUTHORIZATION_NOT_FOUNT = "Unauthorized";
 }

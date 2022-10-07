@@ -35,6 +35,6 @@ public interface OpenController extends ApiController{
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<TokenDTO> openSafebox(
             @PathVariable("id") String safeboxId
-    ) throws Exception;
+    );
 
 }

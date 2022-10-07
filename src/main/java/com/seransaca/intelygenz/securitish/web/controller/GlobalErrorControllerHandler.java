@@ -1,8 +1,6 @@
 package com.seransaca.intelygenz.securitish.web.controller;
 
-import com.seransaca.intelygenz.securitish.service.exceptions.MalformedDataException;
-import com.seransaca.intelygenz.securitish.service.exceptions.SafeboxNotFoundException;
-import com.seransaca.intelygenz.securitish.service.exceptions.UnauthorizedException;
+import com.seransaca.intelygenz.securitish.service.exceptions.*;
 import com.seransaca.intelygenz.securitish.web.dto.error.ApiError;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -62,6 +60,19 @@ public class GlobalErrorControllerHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiError> apiGenericError(Exception ex) {
+		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected API error", ex);
+		return buildResponseEntity(apiError);
+	}
+
+	@ExceptionHandler(LockedException.class)
+	public ResponseEntity<ApiError> apiGenericError(LockedException ex) {
+		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected API error", ex);
+		return buildResponseEntity(apiError);
+	}
+
+
+	@ExceptionHandler(CypherException.class)
+	public ResponseEntity<ApiError> apiGenericError(CypherException ex) {
 		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected API error", ex);
 		return buildResponseEntity(apiError);
 	}

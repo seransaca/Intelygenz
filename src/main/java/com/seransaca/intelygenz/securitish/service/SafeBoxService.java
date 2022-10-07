@@ -12,7 +12,7 @@ public interface SafeBoxService {
      *
      * @return A safebox
      */
-    public SafeBox createNewSafeBox(String name, String password) throws Exception;
+    public SafeBox createNewSafeBox(String name, String password);
 
     /**
      * Return a safebox with the same name and password.

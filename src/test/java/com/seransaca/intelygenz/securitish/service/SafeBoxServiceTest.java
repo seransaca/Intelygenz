@@ -1,5 +1,6 @@
 package com.seransaca.intelygenz.securitish.service;
 
+import com.seransaca.intelygenz.securitish.ConstantsTest;
 import com.seransaca.intelygenz.securitish.entity.SafeBox;
 import com.seransaca.intelygenz.securitish.repository.SafeBoxRepository;
 import com.seransaca.intelygenz.securitish.security.Cypher;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,13 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 public class SafeBoxServiceTest {
 
-    private final static String UUID = "1aaf1523-e07c-4394-9ffb-ff8b0fdbf1ff";
 
-    private final static Integer SAFEBOX_ID = 1;
-
-    private final static String SAFEBOX_NAME = "safeboxName";
-
-    private final static String SAFEBOX_PASSWORD = "safeboxPassword";
 
     @Autowired
     private SafeBoxService safeBoxService;
@@ -45,12 +41,10 @@ public class SafeBoxServiceTest {
 
     @TestConfiguration
     public static class SafeBoxServiceTestConfig {
-
         @Bean
         public SafeBoxService safeBoxService() {
             return new SafeBoxServiceImpl();
         }
-
     }
 
     @BeforeEach

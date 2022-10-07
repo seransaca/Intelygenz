@@ -8,6 +8,7 @@ import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.ItemsService;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
 import com.seransaca.intelygenz.securitish.service.exceptions.SafeboxNotFoundException;
+import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -30,31 +31,19 @@ public class ItemsServiceImpl implements ItemsService {
 
     @Override
     public List<Items> createItems(PutItemsRequest request) {
-
         List<Items> list = new ArrayList<>();
         request.getItems().stream().forEach(item -> {
             try {
                 list.add(itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item)).build()));
             } catch (Exception e) {
-                throw new CypherException(item);
+                throw new CypherException(item, Constants.ERROR_ITEM_ENCRYPT);
             }
         });
         return list;
-        /*for(String item : request.getItems()){
-            items = new Items();
-            items.setUuid(request.getUuid());
-            items.setItem(Cypher.encrypt(item));
-
-            items = itemsRepository.save(items);
-            list.add(items);
-        }
-
-        return list;*/
     }
 
     @Override
     public List<Items> findItems(String uuid) {
-
         safeBoxRepository.findByUuid(uuid)
                 .orElseThrow(() -> new SafeboxNotFoundException(uuid));
 
