@@ -33,5 +33,5 @@ public interface SafeBoxController extends ApiController{
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SafeBoxDTO> createSafeBox(
             @Valid @RequestBody SafeBoxRequestDTO request
-    ) throws Exception;
+    );
 }

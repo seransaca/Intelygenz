@@ -3,6 +3,7 @@ package com.seransaca.intelygenz.securitish.web.converter;
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
+import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
 import com.seransaca.intelygenz.securitish.web.dto.ItemsDTO;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class ItemConverterTest {
     void testItemsToDto_throwException(){
         when(itemsConverter.itemsToDto(getListItems()))
                 .thenThrow(new CypherException(Items.builder().id(ITEM1_ID).item(ITEM_NAME).build().toString(),
-                        CypherException.TYPE_ITEM_CYPHER_EXCEPTION));
+                        Constants.ERROR_ITEM_DECRYPT));
 
         assertThrows(CypherException.class,() -> {
             itemsConverter.itemsToDto(getListItems());

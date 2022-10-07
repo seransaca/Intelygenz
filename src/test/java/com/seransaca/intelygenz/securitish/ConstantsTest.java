@@ -19,4 +19,6 @@ public class ConstantsTest {
     public static final Integer ITEM2_ID = 2;
 
     public static final String ITEM_NAME = "itemName";
+
+    public static final String TOKEN = "RkbfZSW5MmcK3b7kcgg";
 }

@@ -36,7 +36,7 @@ public interface ItemsController extends ApiController{
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ItemsDTO> getItems(
             @PathVariable("id") String safeboxId
-    ) throws Exception;
+    );
 
     @Operation(
             summary = "Get items of safebox",
@@ -56,5 +56,5 @@ public interface ItemsController extends ApiController{
     ResponseEntity<ItemsDTO> putItems(
             @PathVariable("id") String safeboxId,
             @Valid @RequestBody ItemsRequestDTO request
-    ) throws Exception;
+    );
 }
