@@ -30,13 +30,7 @@ public interface ItemsConverter {
 
     default ItemsDTO itemsToDto(List<Items> items){
         ItemsDTO dto = new ItemsDTO(new ArrayList<>());
-        items.stream().forEach(item -> {
-            try {
-                dto.getItemList().add(new ItemDTO(item.getId(),Cypher.decrypt(item.getItem())));
-            } catch (Exception e) {
-                throw new CypherException(item.toString(), Constants.ERROR_ITEM_DECRYPT);
-            }
-        });
+        items.stream().forEach(item -> dto.getItemList().add(new ItemDTO(item.getId(),Cypher.decrypt(item.getItem(), Cypher.TYPE_ITEM))));
         return dto;
     }
 }

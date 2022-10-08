@@ -5,7 +5,6 @@ import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.security.JWTUtils;
 import com.seransaca.intelygenz.securitish.service.SafeBoxService;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
-import com.seransaca.intelygenz.securitish.service.exceptions.LockedException;
 import com.seransaca.intelygenz.securitish.service.exceptions.UnauthorizedException;
 import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.web.controller.OpenController;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,33 +28,38 @@ public class OpenControllerImpl implements OpenController {
 
     @Override
     public ResponseEntity<TokenDTO> openSafebox(String safeboxId) {
-        TokenDTO token = new TokenDTO();
-        SafeBox safeBox = safeBoxService.findSafeBox(safeboxId);
+        return new ResponseEntity<>(Mono.just(safeboxId)
+                .map(id -> safeBoxService.findSafeBox(id))
+                .zipWith(Mono.just(request.getHeader("Authorization")))
+                .filter(tuple -> tuple.getT2() != null && tuple.getT2().toLowerCase().startsWith("basic"))
+                .map(tuple -> processData(tuple.getT1(), tuple.getT2()))
+                .switchIfEmpty(Mono.error(new UnauthorizedException()))
+                .block(),
+                HttpStatus.OK);
+    }
 
-        String authorization = request.getHeader("Authorization");
-        if(authorization == null || !authorization.toLowerCase().startsWith("basic"))
-            throw new UnauthorizedException();
-        if(safeBox.getBlocked() > 2){
-            throw new LockedException(safeboxId);
-        }
-        String name = JWTUtils.getValue(authorization, 0);
-        String pass = JWTUtils.getValue(authorization, 1);
-        boolean validPass;
-        try {
-            validPass = Cypher.decrypt(safeBox.getPassword()).equals(pass);
-        } catch (Exception e) {
-            throw new CypherException(pass, Constants.ERROR_PASSWORD_DECRYPT);
-        }
-        if(!safeBox.getName().equals(name)
-            || !validPass){
-            safeBox.setBlocked(safeBox.getBlocked()+1);
-            safeBoxService.updateSafeBox(safeBox);
-            throw new UnauthorizedException();
-        }else{
-            token.setToken(JWTUtils.createJwtToken(name, pass));
-            safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
-            safeBoxService.updateSafeBox(safeBox);
-        }
-        return new ResponseEntity<>(token, HttpStatus.OK);
+    private TokenDTO processData(SafeBox safeBox, String authorization) {
+        return Mono.just(Cypher.decrypt(safeBox.getPassword(), Cypher.TYPE_PASSWORD))
+                .filter(decrypted -> decrypted.equals(JWTUtils.getValue(authorization, 1)))
+                .map(validPassword -> checkNameAndPassword(safeBox,JWTUtils.getValue(authorization, 0), JWTUtils.getValue(authorization, 1)))
+                .switchIfEmpty(Mono.error(new CypherException(JWTUtils.getValue(authorization, 1), Constants.ERROR_PASSWORD_DECRYPT)))
+                .block();
+    }
+
+    private TokenDTO checkNameAndPassword(SafeBox safeBox, String name, String pass) {
+        return Mono.just(name)
+                .flatMap(result -> {
+                    if(safeBox.getName().equals(name)){
+                        safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
+                        safeBoxService.updateSafeBox(safeBox);
+                        return Mono.just(new TokenDTO(JWTUtils.createJwtToken(name, pass)));
+                    }else{
+                        safeBox.setBlocked(safeBox.getBlocked()+1);
+                        safeBoxService.updateSafeBox(safeBox);
+                        return Mono.empty();
+                    }
+                })
+                .switchIfEmpty(Mono.error(new UnauthorizedException()))
+                .block();
     }
 }

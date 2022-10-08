@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -25,20 +26,18 @@ public class ItemsControllerImpl implements ItemsController {
 
     @Override
     public ResponseEntity<ItemsDTO> getItems(String safeboxId) {
-
-        List<Items> items = itemsService.findItems(safeboxId);
-        ItemsDTO dto = itemsConverter.itemsToDto(items);
-
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(Mono.just(itemsService.findItems(safeboxId))
+                .map(items -> itemsConverter.itemsToDto(items))
+                .block(),
+                HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ItemsDTO> putItems(String safeboxId, ItemsRequestDTO request) {
-
-        PutItemsRequest putItemsRequest = itemsConverter.toRequest(safeboxId, request);
-        List<Items> items = itemsService.createItems(putItemsRequest);
-        ItemsDTO dto = itemsConverter.itemsToDto(items);
-
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(Mono.just(itemsConverter.toRequest(safeboxId, request))
+                .map(putRequest -> itemsService.createItems(putRequest))
+                .map(items -> itemsConverter.itemsToDto(items))
+                .block(),
+                HttpStatus.OK);
     }
 }
