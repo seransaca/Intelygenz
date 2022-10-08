@@ -53,11 +53,11 @@ public class SafeBoxServiceTest {
     }
 
     @Test
-    void testCreateSafeBox_whenNotCreated() throws Exception {
+    void testCreateSafeBox_whenNotCreated() {
         try (MockedStatic<Cypher> cypher = Mockito.mockStatic(Cypher.class);
              MockedStatic<UuidGenerator> uuidGenerated = Mockito.mockStatic(UuidGenerator.class)) {
             uuidGenerated.when(UuidGenerator::createUuid).thenReturn(UUID);
-            cypher.when(() -> Cypher.encrypt(anyString())).thenReturn(SAFEBOX_PASSWORD);
+            cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(SAFEBOX_PASSWORD);
             when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(new ArrayList<>());
             when(safeBoxRepository.save(any(SafeBox.class))).thenReturn(getSafeBox());
 
@@ -76,11 +76,11 @@ public class SafeBoxServiceTest {
     }
 
     @Test
-    void testCreateSafeBox_whenCreated() throws Exception {
+    void testCreateSafeBox_whenCreated() {
         try(MockedStatic<Cypher> cypher = Mockito.mockStatic(Cypher.class);
             MockedStatic<UuidGenerator> uuidGenerated = Mockito.mockStatic(UuidGenerator.class)) {
             uuidGenerated.when(UuidGenerator::createUuid).thenReturn(UUID);
-            cypher.when(() -> Cypher.encrypt(anyString())).thenReturn(SAFEBOX_PASSWORD);
+            cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(SAFEBOX_PASSWORD);
             when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(getListSafeBox());
 
             SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD);

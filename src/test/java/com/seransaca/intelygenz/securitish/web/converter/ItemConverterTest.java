@@ -18,8 +18,7 @@ import java.util.List;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -31,7 +30,7 @@ public class ItemConverterTest {
     @Test
     void testItemsToDto(){
         try (MockedStatic<Cypher> cypher = Mockito.mockStatic(Cypher.class)){
-            cypher.when(() -> Cypher.encrypt(anyString())).thenReturn(ITEM_NAME);
+            cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(ITEM_NAME);
             when(itemsConverter.itemsToDto(any(List.class))).thenReturn(getItemsDTO());
 
             ItemsDTO result = itemsConverter.itemsToDto(getListItems());

@@ -34,7 +34,7 @@ public class ItemsServiceImpl implements ItemsService {
         List<Items> list = new ArrayList<>();
         request.getItems().stream().forEach(item -> {
             try {
-                list.add(itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item)).build()));
+                list.add(itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item, Cypher.TYPE_ITEM)).build()));
             } catch (Exception e) {
                 throw new CypherException(item, Constants.ERROR_ITEM_ENCRYPT);
             }

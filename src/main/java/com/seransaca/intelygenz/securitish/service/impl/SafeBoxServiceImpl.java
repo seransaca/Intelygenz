@@ -36,7 +36,7 @@ public class SafeBoxServiceImpl implements SafeBoxService {
             safeBox.setUuid(UuidGenerator.createUuid());
             safeBox.setName(name);
             try {
-                safeBox.setPassword(Cypher.encrypt(password));
+                safeBox.setPassword(Cypher.encrypt(password, Cypher.TYPE_PASSWORD));
             } catch (Exception e) {
                 throw new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT);
             }
