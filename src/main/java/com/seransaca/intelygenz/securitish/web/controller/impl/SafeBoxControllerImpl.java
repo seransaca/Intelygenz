@@ -1,6 +1,5 @@
 package com.seransaca.intelygenz.securitish.web.controller.impl;
 
-import com.seransaca.intelygenz.securitish.entity.SafeBox;
 import com.seransaca.intelygenz.securitish.service.SafeBoxService;
 import com.seransaca.intelygenz.securitish.web.controller.SafeBoxController;
 import com.seransaca.intelygenz.securitish.web.converter.SafeBoxConverter;

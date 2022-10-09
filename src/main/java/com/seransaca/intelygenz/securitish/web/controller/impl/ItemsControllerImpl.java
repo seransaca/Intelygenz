@@ -1,8 +1,6 @@
 package com.seransaca.intelygenz.securitish.web.controller.impl;
 
-import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.service.ItemsService;
-import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import com.seransaca.intelygenz.securitish.web.controller.ItemsController;
 import com.seransaca.intelygenz.securitish.web.converter.ItemsConverter;
 import com.seransaca.intelygenz.securitish.web.dto.ItemsDTO;
@@ -12,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 public class ItemsControllerImpl implements ItemsController {

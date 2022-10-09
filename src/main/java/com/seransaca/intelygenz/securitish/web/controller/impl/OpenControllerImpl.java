@@ -32,21 +32,20 @@ public class OpenControllerImpl implements OpenController {
                 .map(id -> safeBoxService.findSafeBox(id))
                 .zipWith(Mono.just(request.getHeader("Authorization")))
                 .filter(tuple -> tuple.getT2() != null && tuple.getT2().toLowerCase().startsWith("basic"))
-                .map(tuple -> processData(tuple.getT1(), tuple.getT2()))
+                .flatMap(tuple -> processData(tuple.getT1(), tuple.getT2()))
                 .switchIfEmpty(Mono.error(new UnauthorizedException()))
                 .block(),
                 HttpStatus.OK);
     }
 
-    private TokenDTO processData(SafeBox safeBox, String authorization) {
+    private Mono<TokenDTO> processData(SafeBox safeBox, String authorization) {
         return Mono.just(Cypher.decrypt(safeBox.getPassword(), Cypher.TYPE_PASSWORD))
                 .filter(decrypted -> decrypted.equals(JWTUtils.getValue(authorization, 1)))
-                .map(validPassword -> checkNameAndPassword(safeBox,JWTUtils.getValue(authorization, 0), JWTUtils.getValue(authorization, 1)))
-                .switchIfEmpty(Mono.error(new CypherException(JWTUtils.getValue(authorization, 1), Constants.ERROR_PASSWORD_DECRYPT)))
-                .block();
+                .flatMap(validPassword -> checkNameAndPassword(safeBox,JWTUtils.getValue(authorization, 0), JWTUtils.getValue(authorization, 1)))
+                .switchIfEmpty(Mono.error(new CypherException(JWTUtils.getValue(authorization, 1), Constants.ERROR_PASSWORD_DECRYPT)));
     }
 
-    private TokenDTO checkNameAndPassword(SafeBox safeBox, String name, String pass) {
+    private Mono<TokenDTO> checkNameAndPassword(SafeBox safeBox, String name, String pass) {
         return Mono.just(name)
                 .flatMap(result -> {
                     if(safeBox.getName().equals(name)){
@@ -59,7 +58,6 @@ public class OpenControllerImpl implements OpenController {
                         return Mono.empty();
                     }
                 })
-                .switchIfEmpty(Mono.error(new UnauthorizedException()))
-                .block();
+                .switchIfEmpty(Mono.error(new UnauthorizedException()));
     }
 }
