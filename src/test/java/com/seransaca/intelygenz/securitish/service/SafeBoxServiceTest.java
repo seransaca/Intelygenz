@@ -96,7 +96,7 @@ public class SafeBoxServiceTest {
 
     @Test
     void testUpdateSafebox(){
-        safeBoxRepository.save(getMonoSafeBox().block());
+        safeBoxService.updateSafeBox(getMonoSafeBox().block());
 
         verify(safeBoxRepository,times(1)).save(getMonoSafeBox().block());
         verifyNoMoreInteractions(safeBoxRepository);
@@ -150,7 +150,7 @@ public class SafeBoxServiceTest {
         when(safeBoxRepository.findByUuid(anyString())).thenThrow(new SafeboxNotFoundException(UUID));
 
         assertThrows(SafeboxNotFoundException.class,() -> {
-            safeBoxRepository.findByUuid(UUID);
+            safeBoxService.findSafeBox(UUID);
         });
     }
 
