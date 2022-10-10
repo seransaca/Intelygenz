@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,13 +105,13 @@ public class ItemServiceTest {
         list.add(Items.builder().uuid(UUID).item(ITEM2).build());
         return list;
     }
-    private Optional<SafeBox> getSafeBox(){
+    private Mono<SafeBox> getSafeBox(){
         SafeBox safebox = new SafeBox();
         safebox.setId(SAFEBOX_ID);
         safebox.setName(SAFEBOX_NAME);
         safebox.setUuid(UUID);
         safebox.setPassword(SAFEBOX_PASSWORD);
         safebox.setBlocked(0);
-        return Optional.of(safebox);
+        return Mono.just(safebox);
     }
 }

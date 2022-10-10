@@ -22,7 +22,7 @@ public class SafeBoxControllerImpl implements SafeBoxController {
 
     @Override
     public ResponseEntity<SafeBoxDTO> createSafeBox(SafeBoxRequestDTO request){
-        return new ResponseEntity<>(Mono.just(createSafeBoxService.createNewSafeBox(request.getName(), request.getPassword()))
+        return new ResponseEntity<>(createSafeBoxService.createNewSafeBox(request.getName(), request.getPassword())
                 .map(safebox -> safeBoxConverter.safeboxToDto(safebox))
                 .block(),
                 HttpStatus.OK);

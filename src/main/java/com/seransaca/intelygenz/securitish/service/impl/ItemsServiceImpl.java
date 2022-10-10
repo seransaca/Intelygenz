@@ -44,9 +44,7 @@ public class ItemsServiceImpl implements ItemsService {
 
     @Override
     public List<Items> findItems(String uuid) {
-        safeBoxRepository.findByUuid(uuid)
-                .orElseThrow(() -> new SafeboxNotFoundException(uuid));
-
+        safeBoxRepository.findByUuid(uuid).onErrorMap(error -> new SafeboxNotFoundException(uuid));
         return itemsRepository.findByUuid(uuid);
     }
 }

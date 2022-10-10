@@ -1,6 +1,5 @@
 package com.seransaca.intelygenz.securitish.service;
 
-import com.seransaca.intelygenz.securitish.ConstantsTest;
 import com.seransaca.intelygenz.securitish.entity.SafeBox;
 import com.seransaca.intelygenz.securitish.repository.SafeBoxRepository;
 import com.seransaca.intelygenz.securitish.security.Cypher;
@@ -17,10 +16,10 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,10 +57,10 @@ public class SafeBoxServiceTest {
              MockedStatic<UuidGenerator> uuidGenerated = Mockito.mockStatic(UuidGenerator.class)) {
             uuidGenerated.when(UuidGenerator::createUuid).thenReturn(UUID);
             cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(SAFEBOX_PASSWORD);
-            when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(new ArrayList<>());
+            when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(Mono.empty());
             when(safeBoxRepository.save(any(SafeBox.class))).thenReturn(getSafeBox());
 
-            SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD);
+            SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD).block();
 
             assertNotNull(result);
             assertEquals(SAFEBOX_ID, result.getId());
@@ -81,9 +80,9 @@ public class SafeBoxServiceTest {
             MockedStatic<UuidGenerator> uuidGenerated = Mockito.mockStatic(UuidGenerator.class)) {
             uuidGenerated.when(UuidGenerator::createUuid).thenReturn(UUID);
             cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(SAFEBOX_PASSWORD);
-            when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(getListSafeBox());
+            when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(getMonoSafeBox());
 
-            SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD);
+            SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD).block();
 
             assertNotNull(result);
             assertEquals(SAFEBOX_ID, result.getId());
@@ -97,54 +96,51 @@ public class SafeBoxServiceTest {
 
     @Test
     void testUpdateSafebox(){
-        safeBoxRepository.save(getSafeBox());
+        safeBoxRepository.save(getMonoSafeBox().block());
 
-        verify(safeBoxRepository,times(1)).save(getSafeBox());
+        verify(safeBoxRepository,times(1)).save(getMonoSafeBox().block());
         verifyNoMoreInteractions(safeBoxRepository);
     }
 
     @Test
     void testFindSafeBoWithCorrectParams(){
-        when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(getListSafeBox());
+        when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(getMonoSafeBox());
 
-        List<SafeBox> result = safeBoxRepository.findSafeBoxByNameAndPassword(SAFEBOX_NAME, SAFEBOX_PASSWORD);
+        SafeBox result = safeBoxService.findSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD).block();
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(SAFEBOX_NAME, result.get(0).getName());
-        assertEquals(SAFEBOX_ID, result.get(0).getId());
-        assertEquals(UUID, result.get(0).getUuid());
-        assertEquals(SAFEBOX_PASSWORD, result.get(0).getPassword());
-        assertEquals(0, result.get(0).getBlocked());
+        assertEquals(SAFEBOX_NAME, result.getName());
+        assertEquals(SAFEBOX_ID, result.getId());
+        assertEquals(UUID, result.getUuid());
+        assertEquals(SAFEBOX_PASSWORD, result.getPassword());
+        assertEquals(0, result.getBlocked());
         verify(safeBoxRepository,times(1)).findSafeBoxByNameAndPassword(SAFEBOX_NAME, SAFEBOX_PASSWORD);
         verifyNoMoreInteractions(safeBoxRepository);
     }
 
     @Test
     void testFindSafeBoWithIncorrectParams(){
-        when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(new ArrayList<>());
+        when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(Mono.empty());
 
-        List<SafeBox> result = safeBoxRepository.findSafeBoxByNameAndPassword(SAFEBOX_NAME, SAFEBOX_PASSWORD);
+        SafeBox result = safeBoxService.findSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD).block();
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertNull(result);
         verify(safeBoxRepository,times(1)).findSafeBoxByNameAndPassword(SAFEBOX_NAME, SAFEBOX_PASSWORD);
         verifyNoMoreInteractions(safeBoxRepository);
     }
 
     @Test
     void testFindSafeBoxByUuid(){
-        when(safeBoxRepository.findByUuid(anyString())).thenReturn(Optional.of(getSafeBox()));
+        when(safeBoxRepository.findByUuid(anyString())).thenReturn(getMonoSafeBox());
 
-        Optional<SafeBox> result = safeBoxRepository.findByUuid(UUID);
+        SafeBox result = safeBoxRepository.findByUuid(UUID).block();
 
         assertNotNull(result);
-        assertEquals(SAFEBOX_NAME, result.get().getName());
-        assertEquals(SAFEBOX_ID, result.get().getId());
-        assertEquals(UUID, result.get().getUuid());
-        assertEquals(SAFEBOX_PASSWORD, result.get().getPassword());
-        assertEquals(0, result.get().getBlocked());
+        assertEquals(SAFEBOX_NAME, result.getName());
+        assertEquals(SAFEBOX_ID, result.getId());
+        assertEquals(UUID, result.getUuid());
+        assertEquals(SAFEBOX_PASSWORD, result.getPassword());
+        assertEquals(0, result.getBlocked());
         verify(safeBoxRepository,times(1)).findByUuid(UUID);
         verifyNoMoreInteractions(safeBoxRepository);
     }
@@ -158,11 +154,14 @@ public class SafeBoxServiceTest {
         });
     }
 
-    private List<SafeBox> getListSafeBox(){
-        List<SafeBox> list = new ArrayList<>();
-        SafeBox safeBox = getSafeBox();
-        list.add(safeBox);
-        return list;
+    private Mono<SafeBox> getMonoSafeBox() {
+        SafeBox safeBox = new SafeBox();
+        safeBox.setId(SAFEBOX_ID);
+        safeBox.setUuid(UUID);
+        safeBox.setName(SAFEBOX_NAME);
+        safeBox.setPassword(SAFEBOX_PASSWORD);
+        safeBox.setBlocked(0);
+        return Mono.just(safeBox);
     }
 
     private SafeBox getSafeBox() {
