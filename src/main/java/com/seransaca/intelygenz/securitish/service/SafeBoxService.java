@@ -14,24 +14,24 @@ public interface SafeBoxService {
      *
      * @return A safebox
      */
-    public Mono<SafeBox> createNewSafeBox(String name, String password);
+    Mono<SafeBox> createNewSafeBox(String name, String password);
 
     /**
      * Return a safebox with the same name and password.
      *
      * @return A safebox
      */
-    public Mono<SafeBox> findSafeBox(String name, String password);
+    Mono<SafeBox> findSafeBox(String name, String password);
 
     /**
      * Return a safebox with the same name and password.
      *
      * @return A safebox
      */
-    public Mono<SafeBox> findSafeBox(String uuid);
+    Mono<SafeBox> findSafeBox(String uuid);
 
     /**
      * Update safebox
      */
-    public void updateSafeBox(SafeBox safeBox);
+    void updateSafeBox(SafeBox safeBox);
 }

@@ -36,9 +36,7 @@ public class ItemsServiceImpl implements ItemsService {
     public Flux<Items> createItems(PutItemsRequest request) {
         return Flux.fromStream(request.getItems().stream())
                 .filter(Objects::nonNull)
-                .map(item -> {
-                    return itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item, Cypher.TYPE_ITEM)).build());
-                })
+                .map(item -> itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item, Cypher.TYPE_ITEM)).build()))
                 .switchIfEmpty(Flux.error(new CypherException(request.getItems().toString(), Constants.ERROR_ITEM_ENCRYPT)));
     }
 

@@ -14,12 +14,12 @@ public interface ItemsService {
      *
      * @return A list of Items
      */
-    public Flux<Items> createItems(PutItemsRequest request);
+    Flux<Items> createItems(PutItemsRequest request);
 
     /**
      * Return a list of items of safebox.
      *
      * @return A list of Items
      */
-    public Flux<Items> findItems(String uuid);
+    Flux<Items> findItems(String uuid);
 }
