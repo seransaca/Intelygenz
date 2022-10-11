@@ -14,9 +14,12 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Log4j2
@@ -30,23 +33,16 @@ public class ItemsServiceImpl implements ItemsService {
 
 
     @Override
-    public List<Items> createItems(PutItemsRequest request) {
-        List<Items> list = new ArrayList<>();
-        request.getItems().stream().forEach(item -> {
-            try {
-                list.add(itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item)).build()));
-            } catch (Exception e) {
-                throw new CypherException(item, Constants.ERROR_ITEM_ENCRYPT);
-            }
-        });
-        return list;
+    public Flux<Items> createItems(PutItemsRequest request) {
+        return Flux.fromStream(request.getItems().stream())
+                .filter(Objects::nonNull)
+                .map(item -> itemsRepository.save(Items.builder().uuid(request.getUuid()).item(Cypher.encrypt(item, Cypher.TYPE_ITEM)).build()))
+                .switchIfEmpty(Flux.error(new CypherException(request.getItems().toString(), Constants.ERROR_ITEM_ENCRYPT)));
     }
 
     @Override
-    public List<Items> findItems(String uuid) {
-        safeBoxRepository.findByUuid(uuid)
-                .orElseThrow(() -> new SafeboxNotFoundException(uuid));
-
+    public Flux<Items> findItems(String uuid) {
+        safeBoxRepository.findByUuid(uuid).onErrorMap(error -> new SafeboxNotFoundException(uuid));
         return itemsRepository.findByUuid(uuid);
     }
 }

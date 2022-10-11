@@ -12,8 +12,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.Objects;
 
 @Service
 @Log4j2
@@ -24,44 +25,42 @@ public class SafeBoxServiceImpl implements SafeBoxService {
 
     @Override
     @Transactional
-    public SafeBox createNewSafeBox(String name, String password){
+    public Mono<SafeBox> createNewSafeBox(String name, String password){
         log.info("Creating SafeBox...");
-        List<SafeBox> list = null;
-        SafeBox safeBox = null;
-
-        list = findSafeBox(name, password);
-
-        if(list.isEmpty()){
-            safeBox = new SafeBox();
-            safeBox.setUuid(UuidGenerator.createUuid());
-            safeBox.setName(name);
-            try {
-                safeBox.setPassword(Cypher.encrypt(password));
-            } catch (Exception e) {
-                throw new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT);
-            }
-            safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
-            safeBox = safeBoxRepository.save(safeBox);
-        }else{
-            safeBox = list.get(0);
-        }
-
-        return safeBox;
+        return findSafeBox(name, password)
+                .filter(Objects::nonNull)
+                .map(safebox1 -> safebox1)
+                .switchIfEmpty(createSafeBox(name, password));
     }
 
     @Override
-    public List<SafeBox> findSafeBox(String name, String password) {
+    public Mono<SafeBox> findSafeBox(String name, String password) {
         return safeBoxRepository.findSafeBoxByNameAndPassword(name, password);
     }
 
     @Override
-    public SafeBox findSafeBox(String uuid) {
-        return safeBoxRepository.findByUuid(uuid)
-                .orElseThrow(() -> new SafeboxNotFoundException(uuid));
+    public Mono<SafeBox> findSafeBox(String uuid) {
+        return safeBoxRepository.findByUuid(uuid).onErrorMap(error -> new SafeboxNotFoundException(uuid));
     }
 
     @Override
     public void updateSafeBox(SafeBox safeBox) {
         safeBoxRepository.save(safeBox);
+    }
+
+    private Mono<SafeBox> createSafeBox(String name, String password){
+        return Mono.just(Cypher.encrypt(password, Cypher.TYPE_PASSWORD))
+                .zipWith(Mono.just(UuidGenerator.createUuid()))
+                .flatMap(tuple -> {
+                    SafeBox safeBox = new SafeBox();
+                    safeBox.setName(name);
+                    safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
+                    safeBox.setUuid(tuple.getT2());
+                    safeBox.setPassword(tuple.getT1());
+                    safeBox = safeBoxRepository.save(safeBox);
+                    return Mono.just(safeBox);
+                })
+                .switchIfEmpty(Mono.error(new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT)));
+
     }
 }

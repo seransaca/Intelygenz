@@ -1,6 +1,8 @@
 package com.seransaca.intelygenz.securitish.service;
 
 import com.seransaca.intelygenz.securitish.entity.SafeBox;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,24 +14,24 @@ public interface SafeBoxService {
      *
      * @return A safebox
      */
-    public SafeBox createNewSafeBox(String name, String password);
+    Mono<SafeBox> createNewSafeBox(String name, String password);
 
     /**
      * Return a safebox with the same name and password.
      *
      * @return A safebox
      */
-    public List<SafeBox> findSafeBox(String name, String password);
+    Mono<SafeBox> findSafeBox(String name, String password);
 
     /**
      * Return a safebox with the same name and password.
      *
      * @return A safebox
      */
-    public SafeBox findSafeBox(String uuid);
+    Mono<SafeBox> findSafeBox(String uuid);
 
     /**
      * Update safebox
      */
-    public void updateSafeBox(SafeBox safeBox);
+    void updateSafeBox(SafeBox safeBox);
 }
