@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class ItemServiceTest {
         PutItemsRequest request = getPutItemsRequest();
         when(itemsRepository.save(any(Items.class))).thenReturn(getItemsDB());
 
-        List<Items> result = itemsService.createItems(request);
+        List<Items> result = itemsService.createItems(request).collectList().block();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -71,7 +72,7 @@ public class ItemServiceTest {
         when(itemsRepository.findByUuid(Mockito.anyString())).thenReturn(getListItemsDB());
         when(safeBoxRepository.findByUuid(Mockito.anyString())).thenReturn(getSafeBox());
 
-        List<Items> result = itemsService.findItems(UUID);
+        List<Items> result = itemsService.findItems(UUID).collectList().block();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -99,11 +100,9 @@ public class ItemServiceTest {
         return Items.builder().uuid(UUID).item(ITEM1).build();
     }
 
-    private List<Items> getListItemsDB(){
-        List<Items> list = new ArrayList<>();
-        list.add(Items.builder().uuid(UUID).item(ITEM1).build());
-        list.add(Items.builder().uuid(UUID).item(ITEM2).build());
-        return list;
+    private Flux<Items> getListItemsDB(){
+        return Flux.just(Items.builder().uuid(UUID).item(ITEM1).build(),
+                Items.builder().uuid(UUID).item(ITEM2).build());
     }
     private Mono<SafeBox> getSafeBox(){
         SafeBox safebox = new SafeBox();

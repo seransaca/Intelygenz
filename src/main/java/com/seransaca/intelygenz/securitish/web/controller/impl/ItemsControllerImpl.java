@@ -23,7 +23,7 @@ public class ItemsControllerImpl implements ItemsController {
     @Override
     public ResponseEntity<ItemsDTO> getItems(String safeboxId) {
         return new ResponseEntity<>(Mono.just(itemsService.findItems(safeboxId))
-                .map(items -> itemsConverter.itemsToDto(items))
+                .flatMap(items -> itemsConverter.itemsToDto(items))
                 .block(),
                 HttpStatus.OK);
     }
@@ -32,7 +32,7 @@ public class ItemsControllerImpl implements ItemsController {
     public ResponseEntity<ItemsDTO> putItems(String safeboxId, ItemsRequestDTO request) {
         return new ResponseEntity<>(Mono.just(itemsConverter.toRequest(safeboxId, request))
                 .map(putRequest -> itemsService.createItems(putRequest))
-                .map(items -> itemsConverter.itemsToDto(items))
+                .flatMap(items -> itemsConverter.itemsToDto(items))
                 .block(),
                 HttpStatus.OK);
     }

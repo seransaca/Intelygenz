@@ -4,6 +4,7 @@ import com.seransaca.intelygenz.securitish.entity.Items;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,6 @@ import java.util.Optional;
 public interface ItemsRepository extends JpaRepository<Items, Integer> {
 
     @Query("SELECT i FROM Items i WHERE i.uuid = :uuid ORDER BY id DESC")
-    List<Items> findByUuid(String uuid);
+    Flux<Items> findByUuid(String uuid);
 
 }
