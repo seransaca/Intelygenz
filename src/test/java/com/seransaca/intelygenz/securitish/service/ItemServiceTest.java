@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,8 +95,8 @@ public class ItemServiceTest {
         return list;
     }
 
-    private Items getItemsDB(){
-        return Items.builder().uuid(UUID).item(ITEM1).build();
+    private Mono<Items> getItemsDB(){
+        return Mono.just(Items.builder().uuid(UUID).item(ITEM1).build());
     }
 
     private Flux<Items> getListItemsDB(){
