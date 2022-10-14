@@ -2,8 +2,6 @@ package com.seransaca.intelygenz.securitish.web.converter;
 
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
-import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
-import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
 import com.seransaca.intelygenz.securitish.web.dto.ItemsDTO;
 import org.junit.jupiter.api.Test;
@@ -16,10 +14,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 

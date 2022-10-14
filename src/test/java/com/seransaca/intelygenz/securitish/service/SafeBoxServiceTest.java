@@ -18,9 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +55,7 @@ public class SafeBoxServiceTest {
             uuidGenerated.when(UuidGenerator::createUuid).thenReturn(UUID);
             cypher.when(() -> Cypher.encrypt(anyString(), anyInt())).thenReturn(SAFEBOX_PASSWORD);
             when(safeBoxRepository.findSafeBoxByNameAndPassword(anyString(), anyString())).thenReturn(Mono.empty());
-            when(safeBoxRepository.save(any(SafeBox.class))).thenReturn(getSafeBox());
+            when(safeBoxRepository.save(any(SafeBox.class))).thenReturn(getMonoSafeBox());
 
             SafeBox result = safeBoxService.createNewSafeBox(SAFEBOX_NAME, SAFEBOX_PASSWORD).block();
 

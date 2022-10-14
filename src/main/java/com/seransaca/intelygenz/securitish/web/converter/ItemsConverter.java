@@ -3,7 +3,6 @@ package com.seransaca.intelygenz.securitish.web.converter;
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
-import com.seransaca.intelygenz.securitish.service.exceptions.MalformedDataException;
 import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
@@ -15,7 +14,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,11 +34,18 @@ public interface ItemsConverter {
                 .filter(Objects::nonNull)
                 .flatMap(items2 -> {
                     ItemsDTO dto = new ItemsDTO(new ArrayList<>());
-                    items2.forEach(item -> Mono.just(item)
-                            .zipWith(Mono.just(Cypher.decrypt(item.getItem(), Cypher.TYPE_ITEM)))
-                            .map(tuples -> dto.getItemList().add(new ItemDTO(tuples.getT1().getId(), tuples.getT2())))
-                            .switchIfEmpty(Mono.error(new CypherException(item.getItem(), Constants.ERROR_ITEM_DECRYPT))));
+                    for(Items item :items2){
+                        try {
+                            addItem(dto, new ItemDTO(item.getId(), Cypher.decrypt(item.getItem(), Cypher.TYPE_ITEM)));
+                        }catch (Exception e){
+                            return Mono.error(new CypherException(item.getItem(), Constants.ERROR_ITEM_DECRYPT));
+                        }
+                    }
                     return Mono.just(dto);
                 });
+    }
+    default Mono<ItemsDTO> addItem (ItemsDTO dto, ItemDTO item){
+        dto.getItemList().add(item);
+        return Mono.just(dto);
     }
 }
