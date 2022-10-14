@@ -1,3 +1,4 @@
+drop table if exists safebox;
 create table safebox (
 	id 		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	uuid 	VARCHAR(36) NOT NULL UNIQUE,
@@ -6,6 +7,7 @@ create table safebox (
 	blocked INT NOT NULL DEFAULT 0
 );
 
+drop table if exists items;
 create table items (
 	id 		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	uuid 	VARCHAR(36) NOT NULL,

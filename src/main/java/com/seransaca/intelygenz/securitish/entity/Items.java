@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -17,6 +18,7 @@ import static com.seransaca.intelygenz.securitish.entity.EntityValidationConstan
 @Entity
 @Builder
 @Table(name = "items")
+@org.springframework.data.relational.core.mapping.Table(name = "items")
 public class Items {
 
     @Id

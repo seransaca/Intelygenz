@@ -1,23 +1,18 @@
 package com.seransaca.intelygenz.securitish.repository;
 
 import com.seransaca.intelygenz.securitish.entity.SafeBox;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface SafeBoxRepository extends JpaRepository<SafeBox, Integer> {
+public interface SafeBoxRepository extends R2dbcRepository<SafeBox, Integer> {
 
-    @Query("SELECT sb FROM SafeBox sb WHERE sb.name = :name AND sb.password = :password")
+    @Query("SELECT * FROM safebox  WHERE name = $1 AND password = $2")
     Mono<SafeBox> findSafeBoxByNameAndPassword(String name, String password);
 
-    @Query("SELECT sb FROM SafeBox sb WHERE sb.uuid = :uuid")
+    @Query("SELECT * FROM safebox WHERE uuid = $1")
     Mono<SafeBox> findByUuid(String uuid);
 
 }

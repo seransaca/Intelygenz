@@ -3,6 +3,7 @@ package com.seransaca.intelygenz.securitish.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -15,6 +16,7 @@ import static com.seransaca.intelygenz.securitish.entity.EntityValidationConstan
 @EqualsAndHashCode
 @Entity
 @Table(name = "safebox")
+@org.springframework.data.relational.core.mapping.Table(name = "safebox")
 public class SafeBox {
 
     public static final Integer SAFEBOX_RETRIES_INITIANIZED = 0;
