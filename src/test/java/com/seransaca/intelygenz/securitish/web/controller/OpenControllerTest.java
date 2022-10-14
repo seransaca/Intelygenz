@@ -1,6 +1,5 @@
 package com.seransaca.intelygenz.securitish.web.controller;
 
-import com.seransaca.intelygenz.securitish.ConstantsTest;
 import com.seransaca.intelygenz.securitish.service.SafeBoxService;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
 import com.seransaca.intelygenz.securitish.service.exceptions.UnauthorizedException;
@@ -10,8 +9,6 @@ import com.seransaca.intelygenz.securitish.web.dto.TokenDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;

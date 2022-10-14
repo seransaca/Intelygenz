@@ -27,10 +27,13 @@ public class SafeBoxServiceImpl implements SafeBoxService {
     @Transactional
     public Mono<SafeBox> createNewSafeBox(String name, String password){
         log.info("Creating SafeBox...");
-        return findSafeBox(name, password)
-                .filter(Objects::nonNull)
-                .map(safebox1 -> safebox1)
-                .switchIfEmpty(createSafeBox(name, password));
+//        return findSafeBox(name, password)
+//                .filter(Objects::nonNull)
+//                .map(safebox1 -> safebox1)
+//                .switchIfEmpty(createSafeBox(name, password));
+        return Mono.just(Cypher.encrypt(password, Cypher.TYPE_PASSWORD))
+                .flatMap(pass -> checkSafeBoxExists(name, pass, password))
+                .switchIfEmpty(Mono.error(new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT)));
     }
 
     @Override
@@ -57,10 +60,16 @@ public class SafeBoxServiceImpl implements SafeBoxService {
                     safeBox.setBlocked(SafeBox.SAFEBOX_RETRIES_INITIANIZED);
                     safeBox.setUuid(tuple.getT2());
                     safeBox.setPassword(tuple.getT1());
-                    safeBox = safeBoxRepository.save(safeBox);
-                    return Mono.just(safeBox);
+                    return safeBoxRepository.save(safeBox);
                 })
                 .switchIfEmpty(Mono.error(new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT)));
 
+    }
+
+    private Mono<SafeBox> checkSafeBoxExists(String name, String passEncripted, String password){
+        return findSafeBox(name, passEncripted)
+                .filter(Objects::nonNull)
+                .map(safebox1 -> safebox1)
+                .switchIfEmpty(createSafeBox(name, password));
     }
 }
