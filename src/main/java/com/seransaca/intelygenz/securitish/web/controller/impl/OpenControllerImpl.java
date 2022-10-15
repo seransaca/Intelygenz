@@ -40,10 +40,18 @@ public class OpenControllerImpl implements OpenController {
     }
 
     private Mono<TokenDTO> processData(Mono<SafeBox> safeBox, String authorization) {
-        return safeBox.filter(Objects::nonNull).flatMap(safeBox1 -> Mono.just(Cypher.decrypt(safeBox1.getPassword(), Cypher.TYPE_PASSWORD)))
-                .filter(decrypted -> decrypted.equals(JWTUtils.getValue(authorization, 1)))
-                .flatMap(validPassword -> checkNameAndPassword(safeBox,JWTUtils.getValue(authorization, 0), JWTUtils.getValue(authorization, 1)))
+        return safeBox
+                .filter(Objects::nonNull)
+                .flatMap(safeBox1 -> Mono.just(Cypher.decrypt(safeBox1.getPassword(), Cypher.TYPE_PASSWORD)))
+                .flatMap(decrypt -> decryptPass(safeBox, decrypt, authorization))
                 .switchIfEmpty(Mono.error(new CypherException(JWTUtils.getValue(authorization, 1), Constants.ERROR_PASSWORD_DECRYPT)));
+    }
+
+    private Mono<TokenDTO> decryptPass(Mono<SafeBox> safeBox, String passDecrypted, String authorization){
+        return safeBox
+                .filter(safebox -> passDecrypted.equals(JWTUtils.getValue(authorization, 1)))
+                .flatMap(validPassword -> checkNameAndPassword(safeBox,JWTUtils.getValue(authorization, 0), JWTUtils.getValue(authorization, 1)))
+                .switchIfEmpty(Mono.error(new UnauthorizedException()));
     }
 
     private Mono<TokenDTO> checkNameAndPassword(Mono<SafeBox> safeBox, String name, String pass) {

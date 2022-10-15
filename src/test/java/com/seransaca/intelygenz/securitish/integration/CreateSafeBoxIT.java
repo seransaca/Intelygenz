@@ -2,8 +2,6 @@ package com.seransaca.intelygenz.securitish.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seransaca.intelygenz.securitish.web.controller.SafeBoxController;
-import com.seransaca.intelygenz.securitish.web.dto.SafeBoxDTO;
 import com.seransaca.intelygenz.securitish.web.dto.SafeBoxRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -12,12 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @Slf4j
-public class OpenSafeBoxIT {
+public class CreateSafeBoxIT {
 
     private static final String GOOD_PASSWORD = "Sergio8$Mola";
     private static final String NAME = "nombre";
@@ -54,8 +48,7 @@ public class OpenSafeBoxIT {
         mockMvc.perform(post(URL_PATH_CREATE_SAFEBOX)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestDTO)))
-                .andExpect(status().is4xxClientError())
-                .andReturn();
+                .andExpect(status().is4xxClientError());
 
     }
 
