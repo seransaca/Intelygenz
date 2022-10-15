@@ -21,4 +21,6 @@ public class Constants {
     public static String ERROR_PASSWORD_DECRYPT = "There was an error decrypting password";
 
     public static String ERROR_AUTHORIZATION_NOT_FOUNT = "Unauthorized";
+
+    public static String ERROR_TOKEN_EXPIRED = "The token has expired on %s";
 }

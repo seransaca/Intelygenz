@@ -1,11 +1,14 @@
 package com.seransaca.intelygenz.securitish.security;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +49,17 @@ public class JWTUtils {
     public static String getValue(String autorization,int index){
         String[] values = getBasic(autorization);
         return values[index];
+    }
+
+    public static boolean isExpired(String token){
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getExpiresAt().before(new Date());
+    }
+
+    public static String getExpiredDate(String token){
+        DecodedJWT jwt = JWT.decode(token);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return simpleDateFormat.format(jwt.getExpiresAt());
     }
 
 }
