@@ -1,14 +1,13 @@
 package com.seransaca.intelygenz.securitish.security;
 
-import com.seransaca.intelygenz.securitish.service.exceptions.UnauthorizedException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seransaca.intelygenz.securitish.web.dto.error.ApiError;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -19,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +43,35 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             }else {
                 SecurityContextHolder.clearContext();
             }
-            chain.doFilter(request, response);
-        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException e) {
-            throw e;
+        } catch (ExpiredJwtException e) {
+            ApiError error = createError("JWT expired", e);
+            sendResponse(response, error);
+            return;
+        } catch (MalformedJwtException e) {
+            ApiError error = createError("JWT malformed", e);
+            sendResponse(response, error);
+            return;
+        } catch (UnsupportedJwtException e) {
+            ApiError error = createError("JWT unsupported", e);
+            sendResponse(response, error);
+            return;
         }
+        chain.doFilter(request, response);
+    }
+
+    private static ApiError createError(String msg, Exception ex){
+        return new ApiError(HttpStatus.UNAUTHORIZED, msg, ex);
+    }
+
+
+    private static void sendResponse(HttpServletResponse response, ApiError error) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        PrintWriter out = response.getWriter();
+        response.setStatus(error.getHttpStatus().value());
+        response.setContentType("application/json");
+        mapper.findAndRegisterModules();
+        out.print(mapper.writeValueAsString(error));
+        out.flush();
     }
 
     private Claims validateToken(HttpServletRequest request) {
