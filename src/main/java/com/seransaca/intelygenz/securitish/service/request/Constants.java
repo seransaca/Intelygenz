@@ -22,5 +22,5 @@ public class Constants {
 
     public static String ERROR_AUTHORIZATION_NOT_FOUNT = "Unauthorized";
 
-    public static String ERROR_TOKEN_EXPIRED = "The token has expired on %s";
+    public static String ERROR_ITEMS_NOT_FOUND = "There are no items with uuid %s";
 }

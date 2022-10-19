@@ -3,6 +3,7 @@ package com.seransaca.intelygenz.securitish.web.converter;
 import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.exceptions.CypherException;
+import com.seransaca.intelygenz.securitish.service.exceptions.ItemNotFoundException;
 import com.seransaca.intelygenz.securitish.service.request.Constants;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import com.seransaca.intelygenz.securitish.web.dto.ItemDTO;
@@ -42,6 +43,12 @@ public interface ItemsConverter {
                         }
                     }
                     return Mono.just(dto);
+                })
+                .onErrorResume(error -> {
+                    if (error instanceof ItemNotFoundException)
+                        return Mono.just(new ItemsDTO(new ArrayList<>()));
+                    else
+                        return Mono.error(error);
                 });
     }
     default Mono<ItemsDTO> addItem (ItemsDTO dto, ItemDTO item){
