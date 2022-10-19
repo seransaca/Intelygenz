@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.seransaca.intelygenz</groupId>
 	<artifactId>safe-ish</artifactId>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Safe-ish</name>
 	<description>Intelygenz project for Spring Boot</description>
 	<properties>
@@ -51,6 +51,11 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20160810</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.13.4</version>
 		</dependency>
 
 		<dependency>

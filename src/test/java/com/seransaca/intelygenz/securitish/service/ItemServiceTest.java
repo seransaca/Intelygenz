@@ -4,12 +4,15 @@ import com.seransaca.intelygenz.securitish.entity.Items;
 import com.seransaca.intelygenz.securitish.entity.SafeBox;
 import com.seransaca.intelygenz.securitish.repository.ItemsRepository;
 import com.seransaca.intelygenz.securitish.repository.SafeBoxRepository;
+import com.seransaca.intelygenz.securitish.security.Cypher;
 import com.seransaca.intelygenz.securitish.service.impl.ItemsServiceImpl;
 import com.seransaca.intelygenz.securitish.service.request.PutItemsRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +26,7 @@ import java.util.List;
 
 import static com.seransaca.intelygenz.securitish.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +59,7 @@ public class ItemServiceTest {
     @Test
     void testCreateItems() throws Exception {
         PutItemsRequest request = getPutItemsRequest();
-        when(itemsRepository.save(any(Items.class))).thenReturn(getItemsDB());
+        when(itemsRepository.saveAll(any(Publisher.class))).thenReturn(getListItemsDB());
 
         List<Items> result = itemsService.createItems(request).collectList().block();
 
@@ -93,10 +96,6 @@ public class ItemServiceTest {
         List<String> list = new ArrayList<>();
         list.add(ITEM1);
         return list;
-    }
-
-    private Mono<Items> getItemsDB(){
-        return Mono.just(Items.builder().uuid(UUID).item(ITEM1).build());
     }
 
     private Flux<Items> getListItemsDB(){

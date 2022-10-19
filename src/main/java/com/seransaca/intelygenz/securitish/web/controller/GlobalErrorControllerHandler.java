@@ -84,7 +84,7 @@ public class GlobalErrorControllerHandler {
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ApiError> unauthorizedError(AccessDeniedException ex) {
+	public ResponseEntity<ApiError> accessDeniedError(AccessDeniedException ex) {
 		ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "Specified token does not match", ex);
 		return buildResponseEntity(apiError);
 	}

@@ -27,10 +27,6 @@ public class SafeBoxServiceImpl implements SafeBoxService {
     @Transactional
     public Mono<SafeBox> createNewSafeBox(String name, String password){
         log.info("Creating SafeBox...");
-//        return findSafeBox(name, password)
-//                .filter(Objects::nonNull)
-//                .map(safebox1 -> safebox1)
-//                .switchIfEmpty(createSafeBox(name, password));
         return Mono.just(Cypher.encrypt(password, Cypher.TYPE_PASSWORD))
                 .flatMap(pass -> checkSafeBoxExists(name, pass, password))
                 .switchIfEmpty(Mono.error(new CypherException(password, Constants.ERROR_PASSWORD_ENCRYPT)));
@@ -43,7 +39,7 @@ public class SafeBoxServiceImpl implements SafeBoxService {
 
     @Override
     public Mono<SafeBox> findSafeBox(String uuid) {
-        return safeBoxRepository.findByUuid(uuid).onErrorMap(error -> new SafeboxNotFoundException(uuid));
+        return safeBoxRepository.findByUuid(uuid).switchIfEmpty(Mono.error(new SafeboxNotFoundException(uuid)));
     }
 
     @Override
