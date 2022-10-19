@@ -11,13 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestController
 public class ItemsControllerImpl implements ItemsController {
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Autowired
     private ItemsService itemsService;

@@ -33,12 +33,10 @@ public class CreateSafeBoxIT {
 
     @Test
     public void testCreateSafeBox_returnOK() throws Exception{
-        SafeBoxRequestDTO requestDTO = getRequestDTO();
         mockMvc.perform(post(URL_PATH_CREATE_SAFEBOX)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(requestDTO)))
+                        .content(toJson(getRequestDTO())))
                 .andExpect(status().is2xxSuccessful());
-
     }
 
     @Test
@@ -49,7 +47,6 @@ public class CreateSafeBoxIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestDTO)))
                 .andExpect(status().is4xxClientError());
-
     }
 
     @Test
@@ -60,7 +57,6 @@ public class CreateSafeBoxIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestDTO)))
                 .andExpect(status().is4xxClientError());
-
     }
 
     @Test
@@ -71,7 +67,6 @@ public class CreateSafeBoxIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(requestDTO)))
                 .andExpect(status().is4xxClientError());
-
     }
 
     private SafeBoxRequestDTO getRequestDTO(){

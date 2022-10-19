@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @Slf4j
-public class OpenSafeBoxControllerIT {
+public class OpenSafeBoxIT {
 
     private static final String PASSWORD = "Sergio8$Mola";
     private static final String NAME = "nombre";
