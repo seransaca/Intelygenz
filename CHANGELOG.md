@@ -29,6 +29,8 @@ Improved version with technical comments and own improvements
 
 ### Fixed
 
+- Response in JWT token exception
+
 ## [0.0.1-SNAPSHOT] - 2022-06-08
 
 First version of the technical test for Intelygenz
